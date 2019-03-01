@@ -15,3 +15,7 @@ Small for-fun utility that will generate a very basic rss-2.0 "podcast" feed whe
 There is no built-in save functionality currently, so to save redirect to a file. Note: the `--silent` flag is necessary to prevent node from echo'ing some verbose information into the output.
 
 `npm start --silent -- --url path > demoCastFeed.xml`
+
+## Notable References
+* [https://validator.w3.org/feed/docs/rss2.html](https://validator.w3.org/feed/docs/rss2.html)
+* [https://www.podcast411.com/howto_1.html](https://www.podcast411.com/howto_1.html)
