@@ -1,7 +1,7 @@
 const args = require('minimist')(process.argv.slice(2));
 const Chalk = require('chalk');
-const {scrapeForContent} = require('./scraper.js');
-const {generateAudioFeed} = require('./marker.js')
+const {scrapeForContent} = require('./scraper');
+const {generateAudioFeed} = require('./marker')
 
 /**
  * Process CLI args
@@ -12,11 +12,15 @@ const main = async () => {
         const errorMessage = `No URL supplied: --url ${Chalk.italic('path')}`;
         throw new Error(errorMessage);
     }
-    
-    const {sourceInfo, foundMedia} = await scrapeForContent(args.url, 'mp3');
-    
-    const feed = generateAudioFeed(sourceInfo)(foundMedia);
-    
+    // Support format switch, default to json
+    const format = args.format || 'json';
+    // Type switch
+    const type = args.type || 'mp3';
+
+    const {sourceInfo, foundMedia} = await scrapeForContent(args.url, type);
+
+    const feed = generateAudioFeed(sourceInfo)(foundMedia)(format.toLowerCase());
+
     /*
      Echo to stdout, this would ideally support file output through fs, but
      terminal users can redirect to a file for this quick version

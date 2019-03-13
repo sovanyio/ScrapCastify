@@ -1,7 +1,8 @@
 const request = require('request-promise-native');
 const cheerio = require('cheerio');
+require('./types');
 
-/* 
+/*
   An alternate version of this scraper would use puppeteer to evaluate js
   and traverse the DOM instead of using regex, but this will do for basic sites
 */
@@ -9,7 +10,7 @@ const cheerio = require('cheerio');
 /**
  * Fetch the remote resource, fails if status !== 200
  * @async
- * @param  {string}  url URL of remote resource
+ * @param  {String}  url URL of remote resource
  * @return {Promise}     Promise resolving to the complete returned response
  */
 const getTarget = async url => {
@@ -17,16 +18,16 @@ const getTarget = async url => {
         uri: url,
         resolveWithFullResponse: true
     };
-    
+
     return new Promise(async (resolve, reject) => {
         try {
             const response = await request(options);
-            
+
             // This should probably also check the mime type of the response
             if (response.statusCode === 200) {
                 resolve(response);
             }
-            
+
             const error = `Server returned ${response.statusCode} status`;
             reject(error, response);
         } catch(e) {
@@ -40,7 +41,7 @@ const getTarget = async url => {
  * This could probably be done easily with cheerio, but this is more fun :)
  * @param  {String} body          String representation of response.body
  * @param  {String} extension     Extension to match against
- * @return {Array}                Array of matched resources of type
+ * @return {String[]}             Array of matched resources of type
  */
 const grepLinksByExtension = body => extension => {
     // Create case-insensitive global regex
@@ -58,13 +59,6 @@ const grepLinksByExtension = body => extension => {
 }
 
 /**
- * @typedef {Object} PageInfo
- * @property {String} lastModified Last Modified header data from response
- * @property {String} url          Original request URL
- * @property {String} title        Parsed html title
- */
-
-/**
  * Get some base page data that is helpful when generating RSS XML
  * @param  {String} url URL of the original request
  * @return {PageInfo}   Page metadata
@@ -72,7 +66,7 @@ const grepLinksByExtension = body => extension => {
 const getPageMetadata = url => response => {
     // I was trying to avoid doing this, but lets not make grabbing the title crazy
     const $ = cheerio.load(response.body);
-    
+
     return {
         lastModified: response.headers['last-modified'] || '',
         url: url,
